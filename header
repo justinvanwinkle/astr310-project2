@@ -1,0 +1,96 @@
+\                                                                               
+\fixlen = T
+\RowsRetrieved =               243
+\ORIGIN  = 'IPAC Infrared Science Archive (IRSA), Caltech/JPL'
+\DATETIME= '2018-10-30 05:06:18'
+\DataTag = 'ADS/IRSA.Gator#2018/1030/050618_23298'
+\DATABASE= 'PTF Lightcurve Table (ptf_lightcurves)'
+\EQUINOX = 'J2000'
+\SKYAREA = 'box with center (328.33335,+22.93338) and length 60.0001 arcsec.'
+\StatusFile = '/workspace/TMP_jqHaqD_23298/Gator/irsa/23298/log.23298.html'
+\SQL     = 'WHERE (no constraints) 
+\SQL     = 'SELECT (37 column names follow in next row.)'
+\ 
+\ obsmjd (days) 
+\ ___ Observation MJD plus one half of the exposure time
+\ mag_autocorr (mag) 
+\ ___ Calibrated SExtractor MAG_AUTO with relative photometric correction applied
+\ magerr_auto (mag) 
+\ ___ Calibrated SExtractor MAGERR_AUTO
+\ oid 
+\ ___ Unique object identifier
+\ ra (degrees) 
+\ ___ Object Right Ascension
+\ dec (degrees) 
+\ ___ Object Declination
+\ clon 
+\ ___ Right ascention in Sexagesimal format.
+\ clat 
+\ ___ Declination in Sexagesimal format.
+\ fid 
+\ ___ Filter identifier (1 = g; 2 = R)
+\ transient_flag 
+\ ___ Flag = 1 if epochal detections are transient and not detected in reference image
+\ astrometricrms (degrees) 
+\ ___ Root Mean Squared deviation in epochal positions relative to object RA,Dec
+\ nobs 
+\ ___ Total number of epochal detections (observation epochs) in the lightcurve
+\ ngoodobs 
+\ ___ Number of epochal detections that were not flagged or masked due to bad pixels
+\ nbestobs 
+\ ___ Number of "clean" epochal detections used to compute relative phot. corrections
+\ referencemag (mag) 
+\ ___ Object magnitude from reference image (co-add) if detected (not transient)
+\ referencemagerr (mag) 
+\ ___ Error in referenceMag
+\ medianmag (mag) 
+\ ___ Median magnitude over nobs detections
+\ bestmedianmag (mag) 
+\ ___ Same as medianMag, but using only nbestobs epochal detections
+\ meanmag (mag) 
+\ ___ Mean magnitude over nobs detections
+\ bestmeanmag (mag) 
+\ ___ Same as meanMag, but using only nbestobs epochal detections
+\ magrms (mag) 
+\ ___ Root Mean Squared deviation in nobs magnitudes
+\ bestmagrms (mag) 
+\ ___ Same as magRMS, but using only nbestobs epochal detections
+\ sid 
+\ ___ Source database ID (= procimage database ID x1000000 + SExtractor NUMBER)
+\ s_ra (degrees) 
+\ ___ R.A. of source at observation epoch (SExtractor ALPHAWIN_J2000)
+\ s_dec (degrees) 
+\ ___ Dec. of source at observation epoch (SExtractor DELTAWIN_J2000)
+\ ptffield 
+\ ___ PTF field number
+\ ccdid 
+\ ___ CCD ID
+\ hmjd (days) 
+\ ___ Helocentric MJD plus one half of the exposure time
+\ nid 
+\ ___ Night database ID
+\ mag_auto (mag) 
+\ ___ Calibrated SExtractor MAG_AUTO
+\ limitmag (mag) 
+\ ___ Limiting magnitude
+\ absphotzp (mag) 
+\ ___ Absolute photometric zeropoint
+\ fwhmsex (arcsec) 
+\ ___ SExtractor FWHM
+\ fwhm_image (pixels) 
+\ ___ SExtractor FWHM_IMAGE
+\ qaflags 
+\ ___ Source QA flags [bit flags]
+\ flags 
+\ ___ SExtractor IMAFLAGS_ISO (upper 16 bits) & FLAGS (lower 16 bits) [bit flags]
+\ photcalflag (0=No, 1=Yes) 
+\ ___ Flag indicating source is photometrically calibrated [0=NO, 1=YES]
+\ goodflag (0=No, 1=Yes) 
+\ ___ Flag indicating source is good [0=NO, 1=YES]
+\ pid 
+\ ___ Processed-image database ID
+\ 
+|           obsmjd| mag_autocorr| magerr_auto|                  oid|          ra|         dec|          clon|          clat|   fid| transient_flag| astrometricrms|       nobs|   ngoodobs|   nbestobs| referencemag| referencemagerr| medianmag| bestmedianmag| meanmag| bestmeanmag|  magrms| bestmagrms|                  sid|        s_ra|       s_dec|   ptffield| ccdid|             hmjd|        nid| mag_auto| limitmag| absphotzp| fwhmsex| fwhm_image|    qaflags|      flags| photcalflag|    goodflag|        pid|
+|           double|       double|      double|                 long|      double|      double|          char|          char|  long|            int|         double|        int|        int|        int|       double|          double|    double|        double|  double|      double|  double|     double|                 long|      double|      double|        int|   int|           double|        int|   double|   double|    double|  double|     double|        int|        int|         int|         int|        int|
+|             days|          mag|         mag|                     |     degrees|     degrees|              |              |      |               |        degrees|           |           |           |          mag|             mag|       mag|           mag|     mag|         mag|     mag|        mag|                     |     degrees|     degrees|           |      |             days|           |      mag|      mag|       mag|  arcsec|     pixels|           |           | 0=No, 1=Yes| 0=No, 1=Yes|           |
+|             null|         null|        null|                 null|        null|        null|          null|          null|  null|           null|           null|       null|       null|       null|         null|            null|      null|          null|    null|        null|    null|       null|                 null|        null|        null|       null|  null|             null|       null|     null|     null|      null|    null|       null|       null|       null|        null|        null|       null|
