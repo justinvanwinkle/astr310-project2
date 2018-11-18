@@ -5,6 +5,6 @@ command = ("curl -o '{},{}' -s 'https://irsa.ipac.caltech.edu/cgi-bin/Gator/nph-
            "objstr={}+{}&size=60&outfmt=1'")
 
 
-for ra in np.arange(320, 340, 0.0166667):
-    for dec in np.arange(0, 30, 0.0166667):
+for ra in np.arange(3.0, 3.1, 0.0166667):
+    for dec in np.arange(40, 41, 0.0166667):
         print(command.format(ra, dec, ra, dec))

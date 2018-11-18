@@ -4,6 +4,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from scipy.optimize import curve_fit
 from scipy.optimize import basinhopping
+from scipy.optimize import differential_evolution
 
 
 def tooth_function(x, mag, center, max_time, transit_time):
@@ -36,8 +37,20 @@ def rms(A, B, err):
     return ((A - B)**2 / err).sum()
 
 
+
 def fit_curve(dates, mags, magerrs):
-    params, pcov = curve_fit(synthetic_eclipsing_binary, dates, mags, sigma=magerrs)
+    def minimizee(params):
+        synthetic_mags = synthetic_eclipsing_binary(dates, *params)
+        return rms(mags, synthetic_mags, magerrs)
+
+    max_period = dates.max() - dates.min()
+    mean_mag = mags.mean()
+    res = differential_evolution(
+        minimizee,
+        [(.1, max_period), (0, max_period/2), (0, mean_mag * 2), (.00001, 10), (.00001, 2), (-mean_mag/5, 0), (-mean_mag/5, 0)],
+        disp=False)
+
+    return res.fun, res.x
 
 
 def flat_curve(dates, usual):
@@ -45,7 +58,6 @@ def flat_curve(dates, usual):
 
 
 def analyze_file(fn):
-    print(fn)
     dates = []
     mags = []
     magerrs = []
@@ -69,10 +81,18 @@ def analyze_file(fn):
     # mags += tooth_function(dates, -250, 800, 50, 50)
     # magerrs = np.ones(5000)
 
-    fit_curve(dates, mags, magerrs)
-    plt.errorbar(dates, mags, yerr=magerrs, ecolor='red', fmt='o')
-    plt.show()
-    plt.clf()
+    rms, params = fit_curve(dates, mags, magerrs)
+    period = params[0]
+
+    synthetic_dates = np.linspace(dates.min(), dates.max(), 5000)
+    synthetic_mags = synthetic_eclipsing_binary(synthetic_dates, *params)
+
+    print(rms, fn)
+
+    # plt.errorbar(np.fmod(dates, period), mags, yerr=magerrs, ecolor='red', fmt='o')
+    # plt.plot(np.fmod(synthetic_dates, period), synthetic_mags)
+    # plt.show()
+    # plt.clf()
 
 
 if __name__ == '__main__':
@@ -85,4 +105,4 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     for fn in args.fns:
-        analyze_file(fn)
+        analyze_file(fn.strip())
