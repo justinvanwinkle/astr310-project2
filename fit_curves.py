@@ -72,8 +72,8 @@ def fit_curve(dates, mags, magerrs, verbose=False):
          (0, 1),    # mag1
          (0, 1)],   # mag2
         maxiter=10000,
-        popsize=60,
-        tol=.000000001,
+        popsize=400,
+        tol=.0000000001,
         disp=verbose)
 
     return res.fun, res.x
