@@ -1,11 +1,10 @@
 # from sklearn.metrics import mean_squared_error
 import numpy as np
+import json
+import time
 
 import matplotlib.pyplot as plt
-from scipy.optimize import curve_fit
-from scipy.optimize import basinhopping
 from scipy.optimize import differential_evolution
-from scipy.optimize import brute
 from scipy.stats import chi2
 
 
@@ -30,14 +29,24 @@ def tooth_function(x, mag, center, max_time, transit_time):
     return y
 
 
-def synthetic_eclipsing_binary(dates, period, offset, seperation, baseline, max_time, transit_time, mag1, mag2):
+def synthetic_eclipsing_binary(dates,
+                               period,
+                               offset,
+                               seperation,
+                               baseline,
+                               max_time,
+                               transit_time,
+                               mag1,
+                               mag2):
     mod_dates = np.fmod(dates + offset * period, period)
     center1 = period / 2 - seperation * period
     center2 = period / 2 + seperation * period
 
     data = np.full_like(dates, baseline)
-    data += tooth_function(mod_dates, mag1, center1, max_time * period, transit_time * period)
-    data += tooth_function(mod_dates, mag2, center2, max_time * period, transit_time * period)
+    data += tooth_function(
+        mod_dates, mag1, center1, max_time * period, transit_time * period)
+    data += tooth_function(
+        mod_dates, mag2, center2, max_time * period, transit_time * period)
 
     return data
 
@@ -46,10 +55,10 @@ def chi_square(A, B, err):
     chi_square = ((A - B)**2 / err**2).sum()
     return chi_square
 
+
 def p_value(chi_square, df):
     p_value = chi2.sf(chi_square, df)
     return p_value
-
 
 
 def fit_curve(dates, mags, magerrs, verbose=False):
@@ -57,10 +66,6 @@ def fit_curve(dates, mags, magerrs, verbose=False):
         synthetic_mags = synthetic_eclipsing_binary(dates, *params)
         return chi_square(mags, synthetic_mags, magerrs)
 
-    max_period = dates.max() - dates.min()
-    #print('max period', max_period)
-    mean_mag = mags.mean()
-    #print(mean_mag)
     res = differential_evolution(
         minimizee,
         [(1, 60),  # period
@@ -72,8 +77,8 @@ def fit_curve(dates, mags, magerrs, verbose=False):
          (0, 1),    # mag1
          (0, 1)],   # mag2
         maxiter=10000,
-        popsize=400,
-        tol=.0000000001,
+        popsize=200,
+        tol=.000000001,
         disp=verbose)
 
     return res.fun, res.x
@@ -95,7 +100,10 @@ def fit_flat(dates, mags, magerrs, verbose=False):
 
     return res.fun, res.x
 
+
 def analyze_file(fn, check=False):
+    start_time = time.time()
+
     dates = []
     mags = []
     magerrs = []
@@ -115,6 +123,8 @@ def analyze_file(fn, check=False):
     if not dates:
         return
 
+    notes = dict()
+
     dates = np.array(dates)
     mags = np.array(mags)
     magerrs = np.array(magerrs)
@@ -130,33 +140,41 @@ def analyze_file(fn, check=False):
         plt.clf()
 
     data_points = dates.size
-    # print('number of points', data_points)
 
     chi2_flat, params = fit_flat(dates, mags, magerrs, check)
     p_flat = p_value(chi2_flat, data_points - 1)
-    # print('flat p', p_flat)
+    notes['chi2_flat'] = round(chi2_flat, 6)
+    notes['p_flat'] = round(p_flat, 6)
 
-    if p_flat > .50:
-         print(fn, 'p_flat', p_flat, 'p_curve', None)
-         if not check:
-             return
+    if p_flat < .80 or check:
+        chi2_curve, params = fit_curve(dates, mags, magerrs, check)
+        p_curve = p_value(chi2_curve, data_points - 8)
+        notes['chi2_curve'] = round(chi2_curve, 6)
+        notes['curve_params'] = params.tolist()
+        notes['p_curve'] = round(p_curve, 6)
 
+        if check:
+            period = params[0]
+            offset = params[1]
 
-    chi2_curve, params = fit_curve(dates, mags, magerrs, check)
-    p_curve = p_value(chi2_curve, data_points - 8)
-    print(fn, 'p_flat', p_flat, 'p_curve', p_curve)
-    if check:
-        period = params[0]
-        offset = params[1]
+            synthetic_dates = np.linspace(dates.min(), dates.max(), 10000)
+            synthetic_mags = synthetic_eclipsing_binary(synthetic_dates,
+                                                        *params)
 
-        synthetic_dates = np.linspace(dates.min(), dates.max(), 10000)
-        synthetic_mags = synthetic_eclipsing_binary(synthetic_dates, *params)
+            plt.scatter(np.fmod(synthetic_dates + offset, period),
+                        synthetic_mags,
+                        color='grey')
+            plt.errorbar(np.fmod(dates + offset, period),
+                         mags,
+                         yerr=magerrs,
+                         ecolor='red',
+                         fmt='o')
+            plt.title(fn)
+            plt.show()
+            plt.clf()
 
-        plt.scatter(np.fmod(synthetic_dates + offset, period), synthetic_mags, color='grey')
-        plt.errorbar(np.fmod(dates + offset, period), mags, yerr=magerrs, ecolor='red', fmt='o')
-        plt.title(fn)
-        plt.show()
-        plt.clf()
+    notes['processing_time'] = round(time.time() - start_time, 2)
+    print(json.dumps(notes))
 
 
 if __name__ == '__main__':
