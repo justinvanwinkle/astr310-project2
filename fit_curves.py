@@ -68,7 +68,7 @@ def fit_curve(dates, mags, magerrs, verbose=False):
 
     res = differential_evolution(
         minimizee,
-        [(1, 60),  # period
+        [(1, 120),  # period
          (0, 1),   # offset fraction
          (.0001, .25),   # seperation fraction
          (0, 20),   # baseline
@@ -76,8 +76,8 @@ def fit_curve(dates, mags, magerrs, verbose=False):
          (.00001, .1),         # transit_time fraction
          (0, 1),    # mag1
          (0, 1)],   # mag2
-        maxiter=10000,
-        popsize=200,
+        maxiter=1000,
+        popsize=400,
         tol=.000000001,
         disp=verbose)
 
@@ -123,7 +123,7 @@ def analyze_file(fn, check=False):
     if not dates:
         return
 
-    notes = dict()
+    notes = dict(fn=fn)
 
     dates = np.array(dates)
     mags = np.array(mags)
@@ -170,6 +170,7 @@ def analyze_file(fn, check=False):
                          ecolor='red',
                          fmt='o')
             plt.title(fn)
+            plt.gca().invert_yaxis()
             plt.show()
             plt.clf()
 
