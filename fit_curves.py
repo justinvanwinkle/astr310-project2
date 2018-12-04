@@ -146,7 +146,7 @@ def analyze_file(fn, check=False):
     notes['chi2_flat'] = round(chi2_flat, 6)
     notes['p_flat'] = round(p_flat, 6)
 
-    if p_flat < .80 or check:
+    if p_flat > .80 or check:
         chi2_curve, params = fit_curve(dates, mags, magerrs, check)
         p_curve = p_value(chi2_curve, data_points - 8)
         notes['chi2_curve'] = round(chi2_curve, 6)
